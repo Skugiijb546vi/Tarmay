@@ -14,10 +14,11 @@ MAX_SIZE_BYTES = 1.9 * 1024 * 1024 * 1024
 def download_video():
     print(f"📥 خەریکی داگرتنی فیلمەکە لەم لینکەوە: {VIDEO_URL}")
     
-    # لێرەدا فێڵ لە سێرڤەرەکە دەکەین بە پێدانی ناسنامەی وێبگەڕ (User-Agent)
+    # لێرەدا هەم ناسنامەی وێبگەڕ (User-Agent) و هەم (Referer) دەنێرین بۆ هەڵخەڵەتاندنی سێرڤەرەکە
     command = [
         "ffmpeg", 
         "-user_agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "-headers", "Referer: https://audinifer.com/\r\n",
         "-i", VIDEO_URL, 
         "-c", "copy", 
         ORIGINAL_FILE
