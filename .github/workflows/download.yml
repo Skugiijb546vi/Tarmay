@@ -1,0 +1,38 @@
+name: Download and Process Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'لینکی فیلمەکە (m3u8) لێرە دابنێ'
+        required: true
+        type: string
+
+jobs:
+  process-video:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python Dependencies
+        run: |
+          pip install huggingface_hub
+
+      - name: Run Script
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          VIDEO_URL: ${{ github.event.inputs.video_url }}
+        run: |
+          python main.py
