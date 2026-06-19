@@ -1,0 +1,47 @@
+import os
+import subprocess
+from huggingface_hub import HfApi
+
+# --- ڕێکخستنەکان ---
+VIDEO_URL = "https://audinifer.com/stream/jJLONPpLpipXjLINP3YG9g/kjhhiuahiuhgihdf/1781954636/71959311/index-v1-a1.m3u8"
+OUTPUT_FILE = "movie_compressed.mp4"
+REPO_ID = "Sarko717227/Tarmayai" # ناوی داتابەیسەکەی خۆت
+HF_TOKEN = os.environ.get("HF_TOKEN")
+
+def download_and_compress():
+    print("📥 دەستپێکردنی داگرتن و کەمکردنەوەی قەبارە...")
+    
+    command = [
+        "ffmpeg", 
+        "-i", VIDEO_URL, 
+        "-c:v", "libx265", 
+        "-crf", "28", 
+        "-preset", "fast", 
+        "-c:a", "aac", 
+        "-b:a", "128k", 
+        OUTPUT_FILE
+    ]
+    
+    subprocess.run(command, check=True)
+    print("✅ داگرتن و کۆمپرێس کردن تەواو بوو!")
+
+def upload_to_huggingface():
+    print("🚀 خەریکی ئەپڵۆدکردن بۆ Hugging Face...")
+    api = HfApi()
+    
+    api.upload_file(
+        path_or_fileobj=OUTPUT_FILE,
+        path_in_repo=OUTPUT_FILE,
+        repo_id=REPO_ID,
+        repo_type="dataset", 
+        token=HF_TOKEN
+    )
+    print("🎉 ئەپڵۆدکردن بە سەرکەوتوویی کۆتایی هات!")
+
+if __name__ == "__main__":
+    if not HF_TOKEN:
+        print("❌ هەڵە: تۆکنی Hugging Face (HF_TOKEN) نەدۆزرایەوە لەناو GitHub Secrets!")
+        exit(1)
+        
+    download_and_compress()
+    upload_to_huggingface()
